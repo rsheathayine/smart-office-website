@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart Office Intelligence Platform | Research Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+  :root {
+    --bg: #050a14;
+    --bg2: #080f1e;
+    --card: #0c1628;
+    --border: rgba(56,189,248,0.12);
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --accent3: #34d399;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --heading: #f1f5f9;
+    --glow: 0 0 40px rgba(56,189,248,0.15);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.7;overflow-x:hidden;}
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px;}
+
+  /* ── NAV ── */
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(5,10,20,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;}
+  .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);letter-spacing:-0.02em;}
+  .nav-links{display:flex;gap:0.25rem;list-style:none;}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:0.85rem;font-weight:500;padding:0.4rem 0.8rem;border-radius:6px;transition:all 0.2s;}
+  .nav-links a:hover{color:var(--accent);background:rgba(56,189,248,0.08);}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+  .hamburger span{display:block;width:22px;height:2px;background:var(--accent);border-radius:2px;transition:all 0.3s;}
+  .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(5,10,20,0.98);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:1rem 2rem;z-index:999;}
+  .mobile-menu.open{display:block;}
+  .mobile-menu a{display:block;color:var(--muted);text-decoration:none;padding:0.75rem 0;border-bottom:1px solid var(--border);font-size:0.95rem;}
+  .mobile-menu a:hover{color:var(--accent);}
+
+  /* ── SECTIONS ── */
+  section{padding:100px 2rem;}
+  .container{max-width:1200px;margin:0 auto;}
+  .section-label{font-size:0.75rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem;}
+  .section-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;color:var(--heading);line-height:1.15;margin-bottom:1.5rem;}
+  .section-sub{color:var(--muted);max-width:600px;font-size:1.05rem;}
+
+  /* ── HERO ── */
+  #home{min-height:100vh;display:flex;align-items:center;padding-top:64px;position:relative;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%, rgba(56,189,248,0.06) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 80% 60%, rgba(129,140,248,0.05) 0%, transparent 70%);pointer-events:none;}
+  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(56,189,248,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+  .hero-content{position:relative;z-index:1;max-width:800px;}
+  .hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);color:var(--accent);font-size:0.8rem;font-weight:600;letter-spacing:0.08em;padding:0.4rem 1rem;border-radius:100px;margin-bottom:2rem;}
+  .hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse-dot 2s infinite;}
+  @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.5);}}
+  .hero-title{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;color:var(--heading);line-height:1.05;letter-spacing:-0.03em;margin-bottom:1.5rem;}
+  .hero-title .accent{color:var(--accent);}
+  .hero-desc{color:var(--muted);font-size:1.15rem;max-width:580px;margin-bottom:2.5rem;line-height:1.8;}
+  .hero-stats{display:flex;gap:2.5rem;flex-wrap:wrap;margin-bottom:2.5rem;}
+  .stat-item{display:flex;flex-direction:column;}
+  .stat-num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--heading);}
+  .stat-label{font-size:0.8rem;color:var(--muted);letter-spacing:0.05em;}
+  .hero-cta{display:flex;gap:1rem;flex-wrap:wrap;}
+  .btn-primary{background:var(--accent);color:#050a14;font-weight:700;font-size:0.9rem;padding:0.75rem 1.75rem;border-radius:8px;text-decoration:none;border:none;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+  .btn-primary:hover{background:#7dd3fc;transform:translateY(-2px);}
+  .btn-outline{background:transparent;color:var(--accent);font-weight:600;font-size:0.9rem;padding:0.75rem 1.75rem;border-radius:8px;text-decoration:none;border:1px solid rgba(56,189,248,0.3);cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+  .btn-outline:hover{background:rgba(56,189,248,0.08);border-color:var(--accent);}
+
+  /* ── DOMAIN TABS ── */
+  #domain{background:var(--bg2);}
+  .tab-bar{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:2.5rem;border-bottom:1px solid var(--border);padding-bottom:0;}
+  .tab-btn{font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;color:var(--muted);background:transparent;border:none;padding:0.75rem 1.25rem;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tab-btn:hover{color:var(--text);}
+  .tab-content{display:none;}
+  .tab-content.active{display:block;animation:fadein 0.3s ease;}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .domain-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;}
+  .domain-card h3{font-family:'Syne',sans-serif;font-size:1.3rem;color:var(--heading);margin-bottom:1rem;}
+  .domain-card p{color:var(--muted);line-height:1.8;}
+  .tag-list{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1.25rem;}
+  .tag{font-size:0.75rem;font-weight:600;padding:0.3rem 0.75rem;border-radius:100px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);color:var(--accent);}
+  .tag.purple{background:rgba(129,140,248,0.08);border-color:rgba(129,140,248,0.2);color:var(--accent2);}
+  .tag.green{background:rgba(52,211,153,0.08);border-color:rgba(52,211,153,0.2);color:var(--accent3);}
+
+  /* ── MODULES ── */
+  .modules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-top:3rem;}
+  .module-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;transition:all 0.3s;position:relative;overflow:hidden;}
+  .module-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .module-card:nth-child(1)::before{background:linear-gradient(90deg,var(--accent),#7dd3fc);}
+  .module-card:nth-child(2)::before{background:linear-gradient(90deg,var(--accent3),#6ee7b7);}
+  .module-card:nth-child(3)::before{background:linear-gradient(90deg,var(--accent2),#c7d2fe);}
+  .module-card:hover{transform:translateY(-4px);border-color:rgba(56,189,248,0.25);box-shadow:var(--glow);}
+  .module-num{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:var(--border);line-height:1;margin-bottom:1rem;}
+  .module-card h3{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--heading);margin-bottom:0.75rem;}
+  .module-card p{color:var(--muted);font-size:0.9rem;line-height:1.7;}
+  .module-steps{margin-top:1.25rem;display:flex;flex-direction:column;gap:0.5rem;}
+  .module-step{display:flex;align-items:flex-start;gap:0.6rem;font-size:0.82rem;color:var(--muted);}
+  .module-step::before{content:'→';color:var(--accent);flex-shrink:0;margin-top:0.05rem;}
+
+  /* ── MILESTONES ── */
+  #milestones{background:var(--bg2);}
+  .timeline{position:relative;margin-top:3rem;}
+  .timeline::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:1px;background:var(--border);}
+  .milestone-item{display:flex;gap:2rem;margin-bottom:2.5rem;position:relative;}
+  .milestone-dot{width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1;font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:700;color:var(--accent);}
+  .milestone-dot.done{border-color:var(--accent3);background:rgba(52,211,153,0.1);color:var(--accent3);}
+  .milestone-dot.active{border-color:var(--accent);background:rgba(56,189,248,0.1);}
+  .milestone-body{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;flex:1;}
+  .milestone-meta{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:0.5rem;}
+  .milestone-date{font-size:0.78rem;color:var(--muted);}
+  .milestone-marks{font-size:0.78rem;font-weight:600;color:var(--accent);background:rgba(56,189,248,0.08);padding:0.2rem 0.6rem;border-radius:4px;}
+  .milestone-body h3{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--heading);margin-bottom:0.5rem;}
+  .milestone-body p{color:var(--muted);font-size:0.9rem;line-height:1.7;}
+
+  /* ── DOCUMENTS ── */
+  .docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-top:2.5rem;}
+  /* expandable doc group card */
+  .doc-group{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.25s;}
+  .doc-group:hover{border-color:rgba(56,189,248,0.3);}
+  .doc-group-header{display:flex;align-items:center;gap:1rem;padding:1.25rem 1.5rem;cursor:pointer;user-select:none;}
+  .doc-group-header:hover{background:rgba(56,189,248,0.04);}
+  .doc-icon{width:44px;height:44px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem;}
+  .doc-icon.green{background:rgba(52,211,153,0.08);border-color:rgba(52,211,153,0.15);}
+  .doc-icon.purple{background:rgba(129,140,248,0.08);border-color:rgba(129,140,248,0.15);}
+  .doc-group-info{flex:1;}
+  .doc-group-info h4{font-family:'Syne',sans-serif;font-size:0.95rem;color:var(--heading);margin-bottom:0.2rem;}
+  .doc-group-info p{font-size:0.78rem;color:var(--muted);}
+  .doc-chevron{font-size:0.9rem;color:var(--muted);transition:transform 0.25s;flex-shrink:0;}
+  .doc-chevron.open{transform:rotate(180deg);}
+  .doc-group-body{display:none;border-top:1px solid var(--border);padding:0.75rem 1rem;}
+  .doc-group-body.open{display:block;}
+  /* single direct download */
+  .doc-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;display:flex;align-items:flex-start;gap:1rem;transition:all 0.25s;text-decoration:none;color:inherit;cursor:pointer;}
+  .doc-card:hover{border-color:rgba(56,189,248,0.3);transform:translateY(-2px);box-shadow:var(--glow);}
+  .doc-info h4{font-family:'Syne',sans-serif;font-size:0.95rem;color:var(--heading);margin-bottom:0.3rem;}
+  .doc-info p{font-size:0.8rem;color:var(--muted);}
+  .doc-dl{margin-top:0.5rem;font-size:0.75rem;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:0.25rem;}
+  /* sub file rows inside expanded group */
+  .sub-file{display:flex;align-items:center;gap:0.75rem;padding:0.65rem 0.5rem;border-radius:8px;text-decoration:none;color:inherit;transition:background 0.2s;}
+  .sub-file:hover{background:rgba(56,189,248,0.06);}
+  .sub-file-icon{font-size:0.9rem;flex-shrink:0;width:24px;text-align:center;}
+  .sub-file-name{flex:1;font-size:0.85rem;color:var(--text);}
+  .sub-file-dl{font-size:0.72rem;color:var(--accent);font-weight:600;white-space:nowrap;}
+  .sub-count{display:inline-block;font-size:0.7rem;font-weight:600;background:rgba(56,189,248,0.12);color:var(--accent);padding:0.15rem 0.55rem;border-radius:20px;margin-left:0.5rem;}
+  .doc-note{margin-top:1.5rem;padding:1rem 1.25rem;background:rgba(56,189,248,0.04);border:1px solid rgba(56,189,248,0.12);border-radius:8px;font-size:0.85rem;color:var(--muted);}
+  .doc-note strong{color:var(--accent);}
+
+  /* ── PRESENTATIONS ── */
+  #presentations{background:var(--bg2);}
+  .slides-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-top:2.5rem;}
+  .slide-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;display:flex;align-items:flex-start;gap:1rem;transition:all 0.25s;text-decoration:none;color:inherit;cursor:pointer;}
+  .slide-card:hover{border-color:rgba(129,140,248,0.3);transform:translateY(-2px);}
+  .slide-icon{width:44px;height:44px;border-radius:10px;background:rgba(129,140,248,0.08);border:1px solid rgba(129,140,248,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem;}
+  .slide-info h4{font-family:'Syne',sans-serif;font-size:0.95rem;color:var(--heading);margin-bottom:0.3rem;}
+  .slide-info p{font-size:0.8rem;color:var(--muted);}
+  .slide-dl{margin-top:0.5rem;font-size:0.75rem;color:var(--accent2);font-weight:600;}
+
+  /* ── ML TABLE ── */
+  .ml-table-wrap{overflow-x:auto;margin-top:2.5rem;}
+  table{width:100%;border-collapse:collapse;}
+  thead tr{border-bottom:2px solid var(--border);}
+  th{font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;padding:0.75rem 1rem;text-align:left;}
+  td{padding:1rem;font-size:0.88rem;color:var(--muted);border-bottom:1px solid var(--border);}
+  tbody tr:hover td{background:rgba(56,189,248,0.03);color:var(--text);}
+  td strong{color:var(--heading);}
+  .badge{display:inline-block;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;}
+  .badge-blue{background:rgba(56,189,248,0.1);color:var(--accent);}
+  .badge-green{background:rgba(52,211,153,0.1);color:var(--accent3);}
+  .badge-purple{background:rgba(129,140,248,0.1);color:var(--accent2);}
+
+  /* ── ABOUT ── */
+  .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;margin-top:3rem;}
+  .member-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center;transition:all 0.3s;}
+  .member-card:hover{transform:translateY(-4px);border-color:rgba(56,189,248,0.25);}
+  .member-photo{width:90px;height:90px;border-radius:50%;object-fit:cover;object-position:top;border:3px solid rgba(56,189,248,0.3);margin:0 auto 1.25rem;display:block;}
+  .supervisor-photo{border-color:rgba(129,140,248,0.4);}
+  .member-id{font-size:0.75rem;color:var(--muted);margin-bottom:0.25rem;}
+  .member-name{font-family:'Syne',sans-serif;font-size:1.05rem;color:var(--heading);margin-bottom:0.5rem;}
+  .member-role{font-size:0.82rem;color:var(--accent);margin-bottom:0.75rem;}
+  .member-role.purple{color:var(--accent2);}
+  .member-module{font-size:0.8rem;color:var(--muted);margin-bottom:1rem;line-height:1.5;}
+  .member-email{font-size:0.78rem;color:var(--accent2);text-decoration:none;display:block;}
+  .member-email:hover{text-decoration:underline;}
+  .member-phone{font-size:0.78rem;color:var(--muted);margin-top:0.3rem;}
+  .about-divider{margin:3rem 0 1.5rem;display:flex;align-items:center;gap:1rem;}
+  .about-divider::before,.about-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+  .about-divider span{font-size:0.75rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+  .supervisor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;}
+
+  /* ── CONTACT ── */
+  #contact{background:var(--bg2);}
+  .contact-layout{display:grid;grid-template-columns:1fr 1.5fr;gap:4rem;margin-top:3rem;}
+  .contact-info h3{font-family:'Syne',sans-serif;font-size:1.25rem;color:var(--heading);margin-bottom:1rem;}
+  .contact-info p{color:var(--muted);font-size:0.95rem;line-height:1.8;margin-bottom:2rem;}
+  .contact-item{display:flex;gap:0.75rem;align-items:flex-start;margin-bottom:1.25rem;}
+  .contact-icon{width:38px;height:38px;border-radius:8px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;}
+  .contact-detail label{display:block;font-size:0.75rem;color:var(--muted);margin-bottom:0.2rem;}
+  .contact-detail span{font-size:0.9rem;color:var(--text);}
+  .contact-form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .form-group{margin-bottom:1.25rem;}
+  .form-group label{display:block;font-size:0.82rem;font-weight:600;color:var(--muted);margin-bottom:0.5rem;}
+  .form-group input,.form-group textarea,.form-group select{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;padding:0.75rem 1rem;outline:none;transition:border 0.2s;}
+  .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent);}
+  .form-group textarea{resize:vertical;min-height:120px;}
+  .form-group select option{background:var(--bg2);}
+  .submit-btn{width:100%;background:var(--accent);color:#050a14;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;padding:0.9rem;border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:0.5rem;}
+  .submit-btn:hover{background:#7dd3fc;transform:translateY(-1px);}
+  .submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+  .form-msg{margin-top:1rem;padding:0.75rem 1rem;border-radius:8px;font-size:0.88rem;display:none;}
+  .form-msg.success{display:block;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);color:var(--accent3);}
+  .form-msg.error{display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;}
+
+  /* ── FOOTER ── */
+  footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--muted);font-size:0.82rem;}
+  footer span{color:var(--accent);}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:768px){
+    .nav-links{display:none;}
+    .hamburger{display:flex;}
+    section{padding:80px 1.25rem;}
+    .contact-layout{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+    .timeline::before{left:20px;}
+    .milestone-dot{width:40px;height:40px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">SmartOffice</div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#domain">Domain</a></li>
+      <li><a href="#components">Components</a></li>
+      <li><a href="#milestones">Milestones</a></li>
+      <li><a href="#documents">Documents</a></li>
+      <li><a href="#presentations">Slides</a></li>
+      <li><a href="#about">About Us</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home" onclick="closeMenu()">Home</a>
+  <a href="#domain" onclick="closeMenu()">Domain</a>
+  <a href="#components" onclick="closeMenu()">Components</a>
+  <a href="#milestones" onclick="closeMenu()">Milestones</a>
+  <a href="#documents" onclick="closeMenu()">Documents</a>
+  <a href="#presentations" onclick="closeMenu()">Slides</a>
+  <a href="#about" onclick="closeMenu()">About Us</a>
+  <a href="#contact" onclick="closeMenu()">Contact</a>
+</div>
+
+<!-- HOME -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">Final Year Research Project — 2026</div>
+      <h1 class="hero-title">Smart Office<br/><span class="accent">Intelligence</span><br/>Platform</h1>
+      <p class="hero-desc">AI, IoT, and ML powered smart workplace management. This project develops a smart office platform that improves workplace efficiency, employee well-being, energy usage, and network resource allocation through Machine Learning, IoT, and real-time dashboards.</p>
+      <div class="hero-stats">
+        <div class="stat-item"><span class="stat-num">3</span><span class="stat-label">Core Modules</span></div>
+        <div class="stat-item"><span class="stat-num">5</span><span class="stat-label">ML Models</span></div>
+        <div class="stat-item"><span class="stat-num">98.99%</span><span class="stat-label">Best Accuracy</span></div>
+        <div class="stat-item"><span class="stat-num">IoT</span><span class="stat-label">ESP32 Powered</span></div>
+      </div>
+      <div class="hero-cta">
+        <a href="#domain" class="btn-primary">View Domain</a>
+        <a href="#documents" class="btn-outline">Download Documents</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOMAIN -->
+<section id="domain">
+  <div class="container">
+    <div class="section-label">Research Domain</div>
+    <h2 class="section-title">Understanding the<br/>Problem Space</h2>
+    <p class="section-sub">A deep dive into our literature survey, research gaps, objectives, and chosen methodology.</p>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(event,'tab-survey')">Literature Survey</button>
+      <button class="tab-btn" onclick="switchTab(event,'tab-gap')">Research Gap</button>
+      <button class="tab-btn" onclick="switchTab(event,'tab-problem')">Research Problem</button>
+      <button class="tab-btn" onclick="switchTab(event,'tab-objectives')">Objectives</button>
+      <button class="tab-btn" onclick="switchTab(event,'tab-method')">Methodology</button>
+      <button class="tab-btn" onclick="switchTab(event,'tab-tech')">Technologies</button>
+    </div>
+    <div id="tab-survey" class="tab-content active">
+      <div class="domain-card">
+        <h3>Literature Survey</h3>
+        <p>Modern office environments require intelligent systems to improve productivity, energy efficiency, employee well-being, and network performance. Existing systems often monitor only one area such as energy, employee workload, or network usage. This project combines multiple intelligent modules into one smart office platform, addressing all these dimensions simultaneously with an integrated, data-driven approach.</p>
+        <p style="margin-top:1rem;">Prior research has shown that isolated solutions — whether energy monitoring, HR tools, or network management — fail to capture the full complexity of a modern smart office. A holistic, multi-modal intelligence layer is required. Our platform integrates three distinct but interconnected intelligent modules to achieve this.</p>
+      </div>
+    </div>
+    <div id="tab-gap" class="tab-content">
+      <div class="domain-card">
+        <h3>Research Gap Identified</h3>
+        <p>Most existing office management systems do not combine employee stress detection, task assignment, energy anomaly detection, and bandwidth allocation in one integrated platform. Many systems also lack real-time monitoring, ML-based decision making, and automated alerting.</p>
+        <div class="tag-list">
+          <span class="tag">Unified cross-domain data integration</span>
+          <span class="tag">Camera-based real-time stress analysis</span>
+          <span class="tag">Automated task adjustment from stress signals</span>
+          <span class="tag">ML-driven energy anomaly detection</span>
+          <span class="tag">Workload-aware network bandwidth allocation</span>
+        </div>
+      </div>
+    </div>
+    <div id="tab-problem" class="tab-content">
+      <div class="domain-card">
+        <h3>Research Problem Statement</h3>
+        <p>How can a smart office system use <strong style="color:var(--accent)">Machine Learning</strong>, <strong style="color:var(--accent)">IoT</strong>, and <strong style="color:var(--accent)">real-time monitoring</strong> to improve employee task allocation, reduce energy waste, detect safety risks, and allocate network bandwidth dynamically?</p>
+      </div>
+    </div>
+    <div id="tab-objectives" class="tab-content">
+      <div class="domain-card">
+        <h3>Research Objectives</h3>
+        <p style="margin-bottom:1rem;"><strong style="color:var(--heading)">Main Objective:</strong> To design and develop an integrated Smart Office Intelligence Platform that leverages Machine Learning and IoT to optimize task allocation based on stress, monitor energy usage for anomaly detection, and dynamically manage network bandwidth.</p>
+        <div class="tag-list">
+          <span class="tag">Implement camera-based stress detection using CNN/DeepFace</span>
+          <span class="tag purple">Develop stress-aware task assignment logic</span>
+          <span class="tag green">Create IoT energy monitoring with anomaly detection ML</span>
+          <span class="tag">Build workload-aware bandwidth allocation system</span>
+          <span class="tag purple">Integrate all modules into a real-time monitoring dashboard</span>
+        </div>
+      </div>
+    </div>
+    <div id="tab-method" class="tab-content">
+      <div class="domain-card">
+        <h3>Methodology</h3>
+        <p><strong style="color:var(--heading)">Module 1 — Task Allocation:</strong> Admin sends camera request → Employee accepts/rejects → Webcam captures face image → ML predicts stress (Low/Medium/High) → Workload assigned accordingly → Task auto-cycles on completion.</p>
+        <p style="margin-top:1rem;"><strong style="color:var(--heading)">Module 2 — Energy Optimization:</strong> ESP32 nodes collect power/voltage/current/frequency + temperature/humidity/gas readings → MQTT/TLS transmission → Feature engineering → ML anomaly detection → Alerts via n8n + Twilio.</p>
+        <p style="margin-top:1rem;"><strong style="color:var(--heading)">Module 3 — Bandwidth Allocation:</strong> Endpoint agents collect CPU/RAM/network usage → ML classifies workload tier → Bandwidth allocated → SD-WAN selects optimal path → Live dashboard.</p>
+      </div>
+    </div>
+    <div id="tab-tech" class="tab-content">
+      <div class="domain-card">
+        <h3>Technologies Used</h3>
+        <p style="margin-bottom:1rem;"><strong style="color:var(--heading)">Frontend &amp; Integration</strong></p>
+        <div class="tag-list">
+          <span class="tag">HTML5</span><span class="tag">CSS3</span><span class="tag">JavaScript</span><span class="tag">WebSockets</span><span class="tag">Flask-SocketIO</span><span class="tag">n8n</span><span class="tag">Twilio</span>
+        </div>
+        <p style="margin-top:1.5rem;margin-bottom:1rem;"><strong style="color:var(--heading)">Backend &amp; Infrastructure</strong></p>
+        <div class="tag-list">
+          <span class="tag purple">FastAPI</span><span class="tag purple">Flask</span><span class="tag purple">PostgreSQL</span><span class="tag purple">SQLite</span><span class="tag purple">SQLAlchemy</span><span class="tag purple">MQTT</span><span class="tag purple">ESP32</span><span class="tag purple">SD-WAN</span>
+        </div>
+        <p style="margin-top:1.5rem;margin-bottom:1rem;"><strong style="color:var(--heading)">Machine Learning</strong></p>
+        <div class="tag-list">
+          <span class="tag green">Python</span><span class="tag green">Random Forest</span><span class="tag green">Isolation Forest</span><span class="tag green">CNN / DeepFace</span><span class="tag green">Scikit-learn</span><span class="tag green">OpenCV</span><span class="tag green">Pandas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPONENTS -->
+<section id="components">
+  <div class="container">
+    <div class="section-label">Research Components</div>
+    <h2 class="section-title">Our Research Components</h2>
+    <p class="section-sub">Three intelligent, interconnected modules forming a unified smart office platform.</p>
+    <div class="modules-grid">
+      <div class="module-card">
+        <div class="module-num">01</div>
+        <h3>Camera-Based Stress Detection &amp; Task Allocation</h3>
+        <p>Detects employee stress level using webcam-based facial analysis and assigns suitable tasks based on stress level and workload category.</p>
+        <div class="module-steps">
+          <div class="module-step">Admin requests employee webcam access</div>
+          <div class="module-step">Face image captured and analyzed by ML model</div>
+          <div class="module-step">Stress level classified: Low / Medium / High</div>
+          <div class="module-step">Task assigned based on predicted stress tier</div>
+          <div class="module-step">Next task auto-assigned on completion</div>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="module-num">02</div>
+        <h3>IoT-Based Office Energy Optimization</h3>
+        <p>Monitors office energy and environmental conditions using ESP32 IoT nodes and detects power/air-quality anomalies using ML models.</p>
+        <div class="module-steps">
+          <div class="module-step">ESP32 sensors collect power, temperature, gas data</div>
+          <div class="module-step">Secure data transmission via MQTT/TLS</div>
+          <div class="module-step">Random Forest detects power anomalies</div>
+          <div class="module-step">Isolation Forest detects air-quality risks</div>
+          <div class="module-step">Automated alerts via n8n + Twilio</div>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="module-num">03</div>
+        <h3>AI-Driven Dynamic Bandwidth Allocation</h3>
+        <p>Monitors employee workload and application activity, classifies workload intensity using ML, and dynamically allocates bandwidth.</p>
+        <div class="module-steps">
+          <div class="module-step">Agents collect CPU, RAM, network usage</div>
+          <div class="module-step">ML classifies workload: Low / Medium / High</div>
+          <div class="module-step">Bandwidth regressor predicts optimal Mbps</div>
+          <div class="module-step">SD-WAN controller selects best network path</div>
+          <div class="module-step">Live dashboard shows tier, bandwidth &amp; WAN path</div>
+        </div>
+      </div>
+    </div>
+    <!-- ML Table -->
+    <div style="margin-top:4rem;">
+      <div class="section-label">Machine Learning</div>
+      <h2 class="section-title" style="font-size:2rem;">Our ML Models</h2>
+      <div class="ml-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th><th>Algorithm</th><th>Input</th><th>Output</th><th>Accuracy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Stress Detection</strong></td><td>CNN / DeepFace</td><td>Employee face image/frame</td><td>Low / Medium / High Stress</td><td><span class="badge badge-blue">Task-Driven</span></td></tr>
+            <tr><td><strong>Power Criticality</strong></td><td>Random Forest</td><td>Power, voltage, current, frequency</td><td>normal, idle_waste, standby_loss, abnormal_drop, overload_risk, voltage_issue</td><td><span class="badge badge-green">90.53%</span></td></tr>
+            <tr><td><strong>Air Safety</strong></td><td>RF + Isolation Forest</td><td>Temperature, humidity, gas/smoke</td><td>normal, heat_risk, humidity_risk, air_quality_warning, smoke_suspected, combined_risk</td><td><span class="badge badge-green">98.99%</span></td></tr>
+            <tr><td><strong>Workload Classifier</strong></td><td>Random Forest</td><td>CPU, RAM, network, app usage, stress</td><td>Low / Medium / High workload tier</td><td><span class="badge badge-green">98.53%</span></td></tr>
+            <tr><td><strong>Bandwidth Regressor</strong></td><td>RF Regressor</td><td>Workload tier + active applications</td><td>Recommended Mbps allocation</td><td><span class="badge badge-purple">Regression</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MILESTONES -->
+<section id="milestones">
+  <div class="container">
+    <div class="section-label">Timeline</div>
+    <h2 class="section-title">Project Milestones</h2>
+    <p class="section-sub">Key deliverables and evaluation phases throughout the academic year.</p>
+    <div class="timeline">
+      <div class="milestone-item">
+        <div class="milestone-dot done">✓</div>
+        <div class="milestone-body">
+          <div class="milestone-meta">
+            <span class="milestone-date">October 2025</span>
+            <span class="milestone-marks">Marks: 10%</span>
+          </div>
+          <h3>Project Proposal</h3>
+          <p>Initial project scoping, problem definition, literature review, and feasibility study submission. Presentation of the proposed platform architecture to the panel.</p>
+        </div>
+      </div>
+      <div class="milestone-item">
+        <div class="milestone-dot done">✓</div>
+        <div class="milestone-body">
+          <div class="milestone-meta">
+            <span class="milestone-date">December 2025</span>
+            <span class="milestone-marks">Marks: 20%</span>
+          </div>
+          <h3>Progress Presentation 1</h3>
+          <p>Prototype development and demonstration of core module functionality. Stress detection pipeline, ESP32 data collection, and initial ML model training results.</p>
+        </div>
+      </div>
+      <div class="milestone-item">
+        <div class="milestone-dot done">✓</div>
+        <div class="milestone-body">
+          <div class="milestone-meta">
+            <span class="milestone-date">February 2026</span>
+            <span class="milestone-marks">Marks: 20%</span>
+          </div>
+          <h3>Progress Presentation 2</h3>
+          <p>System integration progress, refined ML model accuracies, dashboard development, and cross-module communication testing.</p>
+        </div>
+      </div>
+      <div class="milestone-item">
+        <div class="milestone-dot done">✓</div>
+        <div class="milestone-body">
+          <div class="milestone-meta">
+            <span class="milestone-date">April 2026</span>
+            <span class="milestone-marks">Marks: 40%</span>
+          </div>
+          <h3>Final Assessment</h3>
+          <p>Comprehensive end-to-end system demonstration, complete documentation submission including final report, individual reports, and checklist documents.</p>
+        </div>
+      </div>
+      <div class="milestone-item">
+        <div class="milestone-dot active">NOW</div>
+        <div class="milestone-body">
+          <div class="milestone-meta">
+            <span class="milestone-date">May 2026</span>
+            <span class="milestone-marks">Marks: 10%</span>
+          </div>
+          <h3>Viva</h3>
+          <p>Final project defense and live demonstration to the examination panel. Individual component deep-dive and Q&amp;A session.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOCUMENTS -->
+<section id="documents">
+  <div class="container">
+    <div class="section-label">Resources</div>
+    <h2 class="section-title">Project Documents</h2>
+    <p class="section-sub">Click any category to expand and download individual files.</p>
+    <div class="docs-grid">
+
+      <!-- Project Charter — single file -->
+      <a class="doc-card" href="assets/documents/project-charter.pdf" download>
+        <div class="doc-icon">📋</div>
+        <div class="doc-info">
+          <h4>Project Charter</h4>
+          <p>Scope, objectives, and team agreement</p>
+          <div class="doc-dl">⬇ Download PDF</div>
+        </div>
+      </a>
+
+      <!-- Proposal Report — 2 members -->
+      <div class="doc-group" id="grp-proposal">
+        <div class="doc-group-header" onclick="toggleGroup('proposal')">
+          <div class="doc-icon">📄</div>
+          <div class="doc-group-info">
+            <h4>Proposal Report <span class="sub-count">2 files</span></h4>
+            <p>Member 1 &amp; Member 2 proposal documents</p>
+          </div>
+          <span class="doc-chevron" id="chev-proposal">▼</span>
+        </div>
+        <div class="doc-group-body" id="body-proposal">
+          <a class="sub-file" href="assets/documents/proposal-member1.pdf" download>
+            <span class="sub-file-icon">📄</span>
+            <span class="sub-file-name">Proposal Report — Member 1 (Shaethayine R)</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+          <a class="sub-file" href="assets/documents/proposal-member2.pdf" download>
+            <span class="sub-file-icon">📄</span>
+            <span class="sub-file-name">Proposal Report — Member 2 (M.A.H.S. Thathsarani)</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Progress Report — 2 members -->
+      <div class="doc-group" id="grp-progress">
+        <div class="doc-group-header" onclick="toggleGroup('progress')">
+          <div class="doc-icon green">📊</div>
+          <div class="doc-group-info">
+            <h4>Progress Report <span class="sub-count">2 files</span></h4>
+            <p>Member 1 &amp; Member 2 progress documents</p>
+          </div>
+          <span class="doc-chevron" id="chev-progress">▼</span>
+        </div>
+        <div class="doc-group-body" id="body-progress">
+          <a class="sub-file" href="assets/documents/progress-member1.pdf" download>
+            <span class="sub-file-icon">📊</span>
+            <span class="sub-file-name">Progress Report — Member 1 (Shaethayine R)</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+          <a class="sub-file" href="assets/documents/progress-member2.pdf" download>
+            <span class="sub-file-icon">📊</span>
+            <span class="sub-file-name">Progress Report — Member 2 (M.A.H.S. Thathsarani)</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Individual Report — 2 members -->
+      <div class="doc-group" id="grp-individual">
+        <div class="doc-group-header" onclick="toggleGroup('individual')">
+          <div class="doc-icon purple">👤</div>
+          <div class="doc-group-info">
+            <h4>Individual Report <span class="sub-count">2 files</span></h4>
+            <p>Member 1 &amp; Member 2 individual contributions</p>
+          </div>
+          <span class="doc-chevron" id="chev-individual">▼</span>
+        </div>
+        <div class="doc-group-body" id="body-individual">
+          <a class="sub-file" href="assets/documents/individual-member1.pdf" download>
+            <span class="sub-file-icon">👤</span>
+            <span class="sub-file-name">Individual Report — Member 1 (Shaethayine R)</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+          <a class="sub-file" href="assets/documents/individual-member2.pdf" download>
+            <span class="sub-file-icon">👤</span>
+            <span class="sub-file-name">Individual Report — Member 2 (M.A.H.S. Thathsarani)</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Final Report — single -->
+      <a class="doc-card" href="assets/documents/final-report.pdf" download>
+        <div class="doc-icon">📚</div>
+        <div class="doc-info">
+          <h4>Final Report</h4>
+          <p>Complete research documentation</p>
+          <div class="doc-dl">⬇ Download PDF</div>
+        </div>
+      </a>
+
+      <!-- Checklist 1 — 3 files -->
+      <div class="doc-group" id="grp-checklist1">
+        <div class="doc-group-header" onclick="toggleGroup('checklist1')">
+          <div class="doc-icon green">✅</div>
+          <div class="doc-group-info">
+            <h4>Checklist 1 <span class="sub-count">3 files</span></h4>
+            <p>Assessment checklist documents — set 1</p>
+          </div>
+          <span class="doc-chevron" id="chev-checklist1">▼</span>
+        </div>
+        <div class="doc-group-body" id="body-checklist1">
+          <a class="sub-file" href="assets/documents/checklist1-doc1.pdf" download>
+            <span class="sub-file-icon">✅</span>
+            <span class="sub-file-name">Checklist 1 — Document 1</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+          <a class="sub-file" href="assets/documents/checklist1-doc2.pdf" download>
+            <span class="sub-file-icon">✅</span>
+            <span class="sub-file-name">Checklist 1 — Document 2</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+          <a class="sub-file" href="assets/documents/checklist1-doc3.pdf" download>
+            <span class="sub-file-icon">✅</span>
+            <span class="sub-file-name">Checklist 1 — Document 3</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Checklist 2 — 2 files -->
+      <div class="doc-group" id="grp-checklist2">
+        <div class="doc-group-header" onclick="toggleGroup('checklist2')">
+          <div class="doc-icon green">☑️</div>
+          <div class="doc-group-info">
+            <h4>Checklist 2 <span class="sub-count">2 files</span></h4>
+            <p>Assessment checklist documents — set 2</p>
+          </div>
+          <span class="doc-chevron" id="chev-checklist2">▼</span>
+        </div>
+        <div class="doc-group-body" id="body-checklist2">
+          <a class="sub-file" href="assets/documents/checklist2-doc1.pdf" download>
+            <span class="sub-file-icon">☑️</span>
+            <span class="sub-file-name">Checklist 2 — Document 1</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+          <a class="sub-file" href="assets/documents/checklist2-doc2.pdf" download>
+            <span class="sub-file-icon">☑️</span>
+            <span class="sub-file-name">Checklist 2 — Document 2</span>
+            <span class="sub-file-dl">⬇ PDF</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+    <div class="doc-note">
+      <strong>📁 File names reference</strong> — Place your PDFs in <code>assets/documents/</code> with these exact filenames:<br/><br/>
+      <code>project-charter.pdf</code> &nbsp;|&nbsp;
+      <code>proposal-member1.pdf</code> &nbsp;|&nbsp; <code>proposal-member2.pdf</code> &nbsp;|&nbsp;
+      <code>progress-member1.pdf</code> &nbsp;|&nbsp; <code>progress-member2.pdf</code> &nbsp;|&nbsp;
+      <code>individual-member1.pdf</code> &nbsp;|&nbsp; <code>individual-member2.pdf</code> &nbsp;|&nbsp;
+      <code>final-report.pdf</code> &nbsp;|&nbsp;
+      <code>checklist1-doc1.pdf</code> &nbsp;|&nbsp; <code>checklist1-doc2.pdf</code> &nbsp;|&nbsp; <code>checklist1-doc3.pdf</code> &nbsp;|&nbsp;
+      <code>checklist2-doc1.pdf</code> &nbsp;|&nbsp; <code>checklist2-doc2.pdf</code>
+    </div>
+  </div>
+</section>
+
+<!-- PRESENTATIONS -->
+<section id="presentations">
+  <div class="container">
+    <div class="section-label">Presentations</div>
+    <h2 class="section-title">Slide Decks</h2>
+    <p class="section-sub">Presentation materials from each milestone review. Click to download.</p>
+    <div class="slides-grid">
+      <a class="slide-card" href="assets/slides/proposal-presentation.pptx" download>
+        <div class="slide-icon">🎯</div>
+        <div class="slide-info">
+          <h4>Proposal Presentation</h4>
+          <p>Research proposal slide deck — October 2025</p>
+          <div class="slide-dl">⬇ Download PPTX</div>
+        </div>
+      </a>
+      <a class="slide-card" href="assets/slides/progress-1.pptx" download>
+        <div class="slide-icon">🔬</div>
+        <div class="slide-info">
+          <h4>Progress Presentation 1</h4>
+          <p>Prototype demonstration — December 2025</p>
+          <div class="slide-dl">⬇ Download PPTX</div>
+        </div>
+      </a>
+      <a class="slide-card" href="assets/slides/progress-2.pptx" download>
+        <div class="slide-icon">⚡</div>
+        <div class="slide-info">
+          <h4>Progress Presentation 2</h4>
+          <p>Integration progress — February 2026</p>
+          <div class="slide-dl">⬇ Download PPTX</div>
+        </div>
+      </a>
+      <a class="slide-card" href="assets/slides/final-presentation.pptx" download>
+        <div class="slide-icon">🏆</div>
+        <div class="slide-info">
+          <h4>Final Presentation</h4>
+          <p>Complete system demonstration — April 2026</p>
+          <div class="slide-dl">⬇ Download PPTX</div>
+        </div>
+      </a>
+    </div>
+    <div class="doc-note" style="margin-top:1.5rem;">
+      <strong>📁 How to add your slides:</strong> Place <code>.pptx</code> files in <code>assets/slides/</code> with filenames: <code>proposal-presentation.pptx</code>, <code>progress-1.pptx</code>, <code>progress-2.pptx</code>, <code>final-presentation.pptx</code>.
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="section-label">The Team</div>
+    <h2 class="section-title">About Our Team</h2>
+    <p class="section-sub">A dedicated group of final-year engineering students building the future of smart workplaces.</p>
+    <div class="team-grid">
+      <div class="member-card">
+        <img src="assets/images/member1.png" alt="Shaethayine R" class="member-photo"/>
+        <div class="member-id">IT22315700</div>
+        <div class="member-name">Shaethayine R</div>
+        <div class="member-role">Module 2 &amp; 3</div>
+        <div class="member-module">IoT Energy Optimization / Dynamic Bandwidth Allocation</div>
+        <a href="mailto:it22315700@my.sliit.lk" class="member-email">it22315700@my.sliit.lk</a>
+      </div>
+      <div class="member-card">
+        <img src="assets/images/member2.jpg" alt="M.A.H.S. Thathsarani" class="member-photo"/>
+        <div class="member-id">IT22564672</div>
+        <div class="member-name">M.A.H.S. Thathsarani</div>
+        <div class="member-role">Module 1</div>
+        <div class="member-module">Camera-Based Stress Detection &amp; Stress-Based Task Allocation</div>
+        <a href="mailto:it22564672@my.sliit.lk" class="member-email">it22564672@my.sliit.lk</a>
+      </div>
+    </div>
+    <div class="about-divider"><span>Project Supervisors</span></div>
+    <div class="supervisor-grid">
+      <div class="member-card">
+        <img src="assets/images/supervisor.png" alt="Prof. Anuradha Jayakody" class="member-photo supervisor-photo"/>
+        <div class="member-role purple">Supervisor</div>
+        <div class="member-name">Prof. Anuradha Jayakody</div>
+        <div class="member-module">Head | Department of Computer Systems Engineering<br/>Faculty of Computing, SLIIT</div>
+        <a href="mailto:anuradha.j@sliit.lk" class="member-email">anuradha.j@sliit.lk</a>
+        <div class="member-phone">071 490 0228</div>
+      </div>
+      <div class="member-card">
+        <img src="assets/images/cosupervisor.png" alt="Mr. Ashvinda Iddamalgoda" class="member-photo supervisor-photo"/>
+        <div class="member-role purple">Co-Supervisor</div>
+        <div class="member-name">Mr. Ashvinda Iddamalgoda</div>
+        <div class="member-module">Assistant Lecturer | Department of Computer Systems Engineering<br/>Faculty of Computing, SLIIT</div>
+        <a href="mailto:ashvinda.i@sliit.lk" class="member-email">ashvinda.i@sliit.lk</a>
+        <div class="member-phone">076 679 0960</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;color:var(--muted);font-size:0.85rem;">
+      Final Year Research Project | Department of Computer Systems Engineering | SLIIT | 2025–2026
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="section-label">Contact</div>
+    <h2 class="section-title">Get In Touch</h2>
+    <div class="contact-layout">
+      <div class="contact-info">
+        <h3>Project Inquiry</h3>
+        <p>Feel free to reach out for research collaborations, system demonstrations, or academic inquiries about the Smart Office Intelligence Platform.</p>
+        <div class="contact-item">
+          <div class="contact-icon">📧</div>
+          <div class="contact-detail">
+            <label>Email</label>
+            <span>it22315700@my.sliit.lk</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🏛️</div>
+          <div class="contact-detail">
+            <label>Institution</label>
+            <span>SLIIT</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🔬</div>
+          <div class="contact-detail">
+            <label>Department</label>
+            <span>Faculty of Engineering, Smart Systems Lab</span>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="cf-name" placeholder="Your name" required/>
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="cf-email" placeholder="your@email.com" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Subject *</label>
+          <select id="cf-subject">
+            <option value="">Select a subject</option>
+            <option>Research Collaboration</option>
+            <option>System Demonstration</option>
+            <option>Academic Inquiry</option>
+            <option>Technical Question</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message *</label>
+          <textarea id="cf-message" placeholder="Write your message here..."></textarea>
+        </div>
+        <button class="submit-btn" id="submitBtn" onclick="sendEmail()">
+          <span id="btn-text">Send Message</span>
+        </button>
+        <div class="form-msg" id="formMsg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 <span>Smart Office Intelligence Platform</span> — Final Year Research Project, SLIIT. All rights reserved.</p>
+</footer>
+
+<script>
+// ── EMAILJS SETUP ──
+// STEP 1: Sign up at https://www.emailjs.com (free)
+// STEP 2: Create an Email Service (Gmail recommended) → copy Service ID
+// STEP 3: Create an Email Template → copy Template ID
+// STEP 4: Go to Account → copy your Public Key
+// STEP 5: Replace the values below:
+
+const EMAILJS_PUBLIC_KEY   = "YOUR_PUBLIC_KEY";   // e.g. "abc123XYZ"
+const EMAILJS_SERVICE_ID   = "YOUR_SERVICE_ID";   // e.g. "service_gmail"
+const EMAILJS_TEMPLATE_ID  = "YOUR_TEMPLATE_ID";  // e.g. "template_contact"
+
+// EmailJS Template variables to use in your template:
+// {{from_name}}, {{from_email}}, {{subject}}, {{message}}
+
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+function sendEmail() {
+  const name    = document.getElementById('cf-name').value.trim();
+  const email   = document.getElementById('cf-email').value.trim();
+  const subject = document.getElementById('cf-subject').value;
+  const message = document.getElementById('cf-message').value.trim();
+  const msgEl   = document.getElementById('formMsg');
+  const btn     = document.getElementById('submitBtn');
+  const btnText = document.getElementById('btn-text');
+
+  if (!name || !email || !subject || !message) {
+    msgEl.textContent = '⚠️ Please fill in all required fields.';
+    msgEl.className = 'form-msg error';
+    return;
+  }
+
+  btn.disabled = true;
+  btnText.textContent = 'Sending…';
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    from_name:  name,
+    from_email: email,
+    subject:    subject,
+    message:    message,
+  }).then(() => {
+    msgEl.textContent = '✅ Message sent successfully! We will get back to you soon.';
+    msgEl.className = 'form-msg success';
+    document.getElementById('cf-name').value = '';
+    document.getElementById('cf-email').value = '';
+    document.getElementById('cf-subject').value = '';
+    document.getElementById('cf-message').value = '';
+    btn.disabled = false;
+    btnText.textContent = 'Send Message';
+  }).catch(() => {
+    msgEl.textContent = '❌ Failed to send message. Please email us directly at it22315700@my.sliit.lk';
+    msgEl.className = 'form-msg error';
+    btn.disabled = false;
+    btnText.textContent = 'Send Message';
+  });
+}
+
+// ── DOCUMENT GROUPS ──
+function toggleGroup(id) {
+  const body = document.getElementById('body-' + id);
+  const chev = document.getElementById('chev-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+
+// ── TABS ──
+function switchTab(e, id) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// ── MOBILE MENU ──
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
+</script>
+</body>
+</html>
